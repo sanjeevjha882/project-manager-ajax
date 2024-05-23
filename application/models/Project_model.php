@@ -1,11 +1,10 @@
 <?php
 
-
 class Project_model extends CI_Model
 {
-
     public function __construct()
     {
+        parent::__construct();
         $this->load->database();
         $this->load->helper('url');
     }
@@ -15,8 +14,8 @@ class Project_model extends CI_Model
     */
     public function get_all()
     {
-        $projects = $this->db->get("projects")->result();
-        return $projects;
+        $query = $this->db->get("projects");
+        return $query->result();
     }
 
     /*
@@ -25,23 +24,22 @@ class Project_model extends CI_Model
     public function store()
     {
         $data = [
-            'name' => $this->input->post('name'),
-            'description' => $this->input->post('description')
+            'name' => $this->input->post('name', TRUE),
+            'description' => $this->input->post('description', TRUE)
         ];
 
         $result = $this->db->insert('projects', $data);
-        return $result;
+        return $result ? $this->db->insert_id() : false;
     }
 
     /*
-        Get an specific record from the database
+        Get a specific record from the database
     */
     public function get($id)
     {
-        $project = $this->db->get_where('projects', ['id' => $id])->row();
-        return $project;
+        $query = $this->db->get_where('projects', ['id' => $id]);
+        return $query->row();
     }
-
 
     /*
         Update or Modify a record in the database
@@ -49,13 +47,12 @@ class Project_model extends CI_Model
     public function update($id)
     {
         $data = [
-            'name' => $this->input->post('name'),
-            'description' => $this->input->post('description')
+            'name' => $this->input->post('name', TRUE),
+            'description' => $this->input->post('description', TRUE)
         ];
 
-        $result = $this->db->where('id', $id)->update('projects', $data);
-        return $result;
-
+        $this->db->where('id', $id);
+        return $this->db->update('projects', $data);
     }
 
     /*
@@ -63,9 +60,7 @@ class Project_model extends CI_Model
     */
     public function delete($id)
     {
-        $result = $this->db->delete('projects', array('id' => $id));
-        return $result;
+        return $this->db->delete('projects', ['id' => $id]);
     }
-
 }
 ?>

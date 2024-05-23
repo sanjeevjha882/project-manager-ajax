@@ -4,7 +4,7 @@
 <head>
     <title><?php echo $title; ?></title>
     <meta charset="utf-8">
-    <meta name="app-url" content="<?php echo base_url('/') ?>">
+    <meta name="app-url" content="<?php echo base_url('/'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -13,20 +13,14 @@
 </head>
 
 <body>
-
-
     <div class="container">
         <h2 class="text-center mt-5 mb-3"><?php echo $title; ?></h2>
         <div class="card">
             <div class="card-header">
-                <button class="btn btn-outline-primary" onclick="createProject()">
-                    Create New Project
-                </button>
+                <button class="btn btn-outline-primary" onclick="createProject()">Create New Project</button>
             </div>
             <div class="card-body">
-                <div id="alert-div">
-
-                </div>
+                <div id="alert-div"></div>
                 <table class="table table-bordered">
                     <thead>
                         <tr>
@@ -35,10 +29,7 @@
                             <th width="240px">Action</th>
                         </tr>
                     </thead>
-                    <tbody id="projects-table-body">
-
-                    </tbody>
-
+                    <tbody id="projects-table-body"></tbody>
                 </table>
             </div>
         </div>
@@ -51,13 +42,11 @@
                 <div class="modal-header">
                     <h5 class="modal-title">Project Form</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
+                        <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div id="modal-alert-div">
-
-                    </div>
+                    <div id="modal-alert-div"></div>
                     <form>
                         <input type="hidden" name="update_id" id="update_id">
                         <div class="form-group">
@@ -68,7 +57,6 @@
                             <label for="description">Description</label>
                             <textarea class="form-control" id="description" rows="3" name="description"></textarea>
                         </div>
-
                         <button type="submit" class="btn btn-outline-primary" id="save-project-btn">Save
                             Project</button>
                     </form>
@@ -84,7 +72,7 @@
                 <div class="modal-header">
                     <h5 class="modal-title">Project Information</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
+                        <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
@@ -98,80 +86,54 @@
     </div>
 
     <script type="text/javascript">
-        showAllProjects();
-        /*
-            This function will get all the project records
-        */
+        $(document).ready(function () {
+            showAllProjects();
+        });
+
         function showAllProjects() {
-            let url = $('meta[name=app-url]').attr("content") + "project/show-all";
+            const url = $('meta[name=app-url]').attr("content") + "project/show_all";
             $.ajax({
                 url: url,
                 type: "GET",
                 success: function (response) {
-                    $("#projects-table-body").html("");
-                    let projects = response;
-                    for (var i = 0; i < projects.length; i++) {
-                        let showBtn = '<button ' +
-                            ' class="btn btn-outline-info" ' +
-                            ' onclick="showProject(' + projects[i].id + ')">Show' +
-                            '</button> ';
-                        let editBtn = '<button ' +
-                            ' class="btn btn-outline-success" ' +
-                            ' onclick="editProject(' + projects[i].id + ')">Edit' +
-                            '</button> ';
-                        let deleteBtn = '<button ' +
-                            ' class="btn btn-outline-danger" ' +
-                            ' onclick="destroyProject(' + projects[i].id + ')">Delete' +
-                            '</button>';
-
-                        let projectRow = '<tr>' +
-                            '<td>' + projects[i].name + '</td>' +
-                            '<td>' + projects[i].description + '</td>' +
-                            '<td>' + showBtn + editBtn + deleteBtn + '</td>' +
-                            '</tr>';
-                        $("#projects-table-body").append(projectRow);
-                    }
-
-
+                    const projects = response;
+                    const tbody = $("#projects-table-body");
+                    tbody.empty();
+                    projects.forEach(project => {
+                        const projectRow = `
+                            <tr>
+                                <td>${project.name}</td>
+                                <td>${project.description}</td>
+                                <td>
+                                    <button class="btn btn-outline-info" onclick="showProject(${project.id})">Show</button>
+                                    <button class="btn btn-outline-success" onclick="editProject(${project.id})">Edit</button>
+                                    <button class="btn btn-outline-danger" onclick="destroyProject(${project.id})">Delete</button>
+                                </td>
+                            </tr>`;
+                        tbody.append(projectRow);
+                    });
                 },
                 error: function (response) {
-                    console.log(response)
+                    console.error(response);
                 }
             });
         }
 
-        /*
-            check if form submitted is for creating or updating
-        */
         $("#save-project-btn").click(function (event) {
             event.preventDefault();
-            if ($("#update_id").val() == null || $("#update_id").val() == "") {
-                storeProject();
-            } else {
-                updateProject();
-            }
-        })
+            const isUpdate = $("#update_id").val();
+            isUpdate ? updateProject() : storeProject();
+        });
 
-        /*
-            show modal for creating a record and 
-            empty the values of form and remove existing alerts
-        */
         function createProject() {
-            $("#alert-div").html("");
-            $("#modal-alert-div").html("");
-            $("#update_id").val("");
-            $("#name").val("");
-            $("#description").val("");
+            resetForm();
             $("#form-modal").modal('show');
         }
 
-        /*
-            submit the form and will be stored to the database
-        */
         function storeProject() {
-            $("#save-project-btn").prop('disabled', true);
-            let url = $('meta[name=app-url]').attr("content") + "/project/store";
-            let data = {
+            toggleSaveButton(true);
+            const url = $('meta[name=app-url]').attr("content") + "project/store";
+            const data = {
                 name: $("#name").val(),
                 description: $("#description").val(),
             };
@@ -180,64 +142,42 @@
                 type: "POST",
                 data: data,
                 success: function (response) {
-
-                    $("#save-project-btn").prop('disabled', false);
-                    let successHtml = '<div class="alert alert-success" role="alert"><b>Project Created Successfully</b></div>';
-                    $("#alert-div").html(successHtml);
-                    $("#name").val("");
-                    $("#description").val("");
+                    toggleSaveButton(false);
+                    displayAlert("#alert-div", "success", "Project Created Successfully");
+                    resetForm();
                     showAllProjects();
                     $("#form-modal").modal('hide');
                 },
                 error: function (response) {
-                    $("#save-project-btn").prop('disabled', false);
-
-                    let responseData = JSON.parse(response.responseText);
-                    console.log(responseData.errors);
-
-                    if (typeof responseData.errors !== 'undefined') {
-                        let errorHtml = '<div class="alert alert-danger" role="alert">' +
-                            '<b>Validation Error!</b>' +
-                            responseData.errors +
-                            '</div>';
-                        $("#modal-alert-div").html(errorHtml);
-                    }
+                    toggleSaveButton(false);
+                    displayValidationErrors(response, "#modal-alert-div");
                 }
             });
         }
 
-
-        /*
-            edit record function
-            it will get the existing value and show the project form
-        */
         function editProject(id) {
-            let url = $('meta[name=app-url]').attr("content") + "project/edit/" + id;
+            const url = $('meta[name=app-url]').attr("content") + "project/edit/" + id;
             $.ajax({
                 url: url,
                 type: "GET",
                 success: function (response) {
-                    let project = response;
-                    $("#alert-div").html("");
-                    $("#modal-alert-div").html("");
+                    const project = response;
+                    resetForm();
                     $("#update_id").val(project.id);
                     $("#name").val(project.name);
                     $("#description").val(project.description);
                     $("#form-modal").modal('show');
                 },
                 error: function (response) {
-
+                    console.error(response);
                 }
             });
         }
 
-        /*
-            sumbit the form and will update a record
-        */
         function updateProject() {
-            $("#save-project-btn").prop('disabled', true);
-            let url = $('meta[name=app-url]').attr("content") + "project/update/" + $("#update_id").val();
-            let data = {
+            toggleSaveButton(true);
+            const url = $('meta[name=app-url]').attr("content") + "project/update/" + $("#update_id").val();
+            const data = {
                 id: $("#update_id").val(),
                 name: $("#name").val(),
                 description: $("#description").val(),
@@ -247,82 +187,75 @@
                 type: "POST",
                 data: data,
                 success: function (response) {
-                    $("#save-project-btn").prop('disabled', false);
-                    let successHtml = '<div class="alert alert-success" role="alert"><b>Project Updated Successfully</b></div>';
-                    $("#alert-div").html(successHtml);
-                    $("#name").val("");
-                    $("#description").val("");
+                    toggleSaveButton(false);
+                    displayAlert("#alert-div", "success", "Project Updated Successfully");
+                    resetForm();
                     showAllProjects();
                     $("#form-modal").modal('hide');
                 },
                 error: function (response) {
-                    /*
-                        show validation error
-                    */
-                    $("#save-project-btn").prop('disabled', false);
-
-                    let responseData = JSON.parse(response.responseText);
-                    console.log(responseData.errors);
-
-                    if (typeof responseData.errors !== 'undefined') {
-                        let errorHtml = '<div class="alert alert-danger" role="alert">' +
-                            '<b>Validation Error!</b>' +
-                            responseData.errors +
-                            '</div>';
-                        $("#modal-alert-div").html(errorHtml);
-                    }
+                    toggleSaveButton(false);
+                    displayValidationErrors(response, "#modal-alert-div");
                 }
             });
         }
 
-        /*
-            get and display the record info on modal
-        */
         function showProject(id) {
-            $("#name-info").html("");
-            $("#description-info").html("");
-            let url = $('meta[name=app-url]').attr("content") + "project/show/" + id + "";
+            const url = $('meta[name=app-url]').attr("content") + "project/show/" + id;
             $.ajax({
                 url: url,
                 type: "GET",
                 success: function (response) {
-                    console.log(response);
-                    let project = response;
-                    $("#name-info").html(project.name);
-                    $("#description-info").html(project.description);
+                    const project = response;
+                    $("#name-info").text(project.name);
+                    $("#description-info").text(project.description);
                     $("#view-modal").modal('show');
-
                 },
                 error: function (response) {
-                    console.log(response)
+                    console.error(response);
                 }
             });
         }
 
-        /*
-            delete record function
-        */
         function destroyProject(id) {
-            let url = $('meta[name=app-url]').attr("content") + "/project/delete/" + id;
-            let data = {
-                name: $("#name").val(),
-                description: $("#description").val(),
-            };
+            const url = $('meta[name=app-url]').attr("content") + "project/delete/" + id;
             $.ajax({
                 url: url,
                 type: "DELETE",
-                data: data,
                 success: function (response) {
-                    let successHtml = '<div class="alert alert-success" role="alert"><b>Project Deleted Successfully</b></div>';
-                    $("#alert-div").html(successHtml);
+                    displayAlert("#alert-div", "success", "Project Deleted Successfully");
                     showAllProjects();
                 },
                 error: function (response) {
-                    console.log(response)
+                    console.error(response);
                 }
             });
         }
 
+        function resetForm() {
+            $("#alert-div").empty();
+            $("#modal-alert-div").empty();
+            $("#update_id").val("");
+            $("#name").val("");
+            $("#description").val("");
+        }
+
+        function toggleSaveButton(disabled) {
+            $("#save-project-btn").prop('disabled', disabled);
+        }
+
+        function displayAlert(selector, type, message) {
+            const alertHtml = `<div class="alert alert-${type}" role="alert"><b>${message}</b></div>`;
+            $(selector).html(alertHtml);
+        }
+
+        function displayValidationErrors(response, selector) {
+            const responseData = JSON.parse(response.responseText);
+            if (responseData.errors) {
+                const errorHtml = `<div class="alert alert-danger" role="alert"><b>Validation Error!</b> ${responseData.errors}</div>`;
+                $(selector).html(errorHtml);
+            }
+        }
     </script>
 </body>
 
