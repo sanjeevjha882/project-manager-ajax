@@ -9,9 +9,9 @@ class User extends CI_Controller
         parent::__construct();
         $this->load->helper('url');
         $this->load->model('users_model');
-        //include modal.php in views
         $this->inc['modal'] = $this->load->view('modal', '', true);
     }
+
     public function index()
     {
         $this->load->view('show', $this->inc);
@@ -28,6 +28,7 @@ class User extends CI_Controller
                 <td><?php echo $row->email; ?></td>
                 <td><?php echo $row->password; ?></td>
                 <td><?php echo $row->fname; ?></td>
+                <td><button class="btn"><?php echo $row->status; ?></button></td> <!-- Display user status -->
                 <td>
                     <button class="btn btn-warning edit" data-id="<?php echo $row->id; ?>"><span
                             class="glyphicon glyphicon-edit"></span> Edit</button> ||
@@ -44,6 +45,7 @@ class User extends CI_Controller
         $user['email'] = $_POST['email'];
         $user['password'] = $_POST['password'];
         $user['fname'] = $_POST['fname'];
+        $user['status'] = $_POST['status']; // Added status field
 
         $query = $this->users_model->insert($user);
     }
@@ -61,6 +63,7 @@ class User extends CI_Controller
         $user['email'] = $_POST['email'];
         $user['password'] = $_POST['password'];
         $user['fname'] = $_POST['fname'];
+        $user['status'] = $_POST['status']; // Added status field
 
         $query = $this->users_model->updateuser($user, $id);
     }
@@ -71,4 +74,14 @@ class User extends CI_Controller
         $query = $this->users_model->delete($id);
     }
 
+    // New method to update status
+    public function updateStatus()
+    {
+        $id = $_POST['id'];
+        $status = $_POST['status'];
+
+        $query = $this->users_model->updateStatus($id, $status);
+    }
+
 }
+?>
