@@ -1,5 +1,4 @@
 <?php
-
 class Project_model extends CI_Model
 {
     public function __construct()
@@ -25,7 +24,8 @@ class Project_model extends CI_Model
     {
         $data = [
             'name' => $this->input->post('name', TRUE),
-            'description' => $this->input->post('description', TRUE)
+            'description' => $this->input->post('description', TRUE),
+            'status' => $this->input->post('status', TRUE)
         ];
 
         $result = $this->db->insert('projects', $data);
@@ -48,7 +48,8 @@ class Project_model extends CI_Model
     {
         $data = [
             'name' => $this->input->post('name', TRUE),
-            'description' => $this->input->post('description', TRUE)
+            'description' => $this->input->post('description', TRUE),
+            'status' => $this->input->post('status', TRUE)
         ];
 
         $this->db->where('id', $id);

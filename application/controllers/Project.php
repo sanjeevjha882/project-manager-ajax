@@ -52,6 +52,7 @@ class Project extends CI_Controller
     {
         $this->form_validation->set_rules('name', 'Name', 'required');
         $this->form_validation->set_rules('description', 'Description', 'required');
+        $this->form_validation->set_rules('status', 'Status', 'required'); // Ensure status is required
 
         if (!$this->form_validation->run()) {
             http_response_code(412);
@@ -93,6 +94,7 @@ class Project extends CI_Controller
     {
         $this->form_validation->set_rules('name', 'Name', 'required');
         $this->form_validation->set_rules('description', 'Description', 'required');
+        $this->form_validation->set_rules('status', 'Status', 'required'); // Ensure status is required
 
         if (!$this->form_validation->run()) {
             http_response_code(412);
@@ -126,3 +128,4 @@ class Project extends CI_Controller
         }
     }
 }
+?>

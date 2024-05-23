@@ -27,6 +27,7 @@
                             <th>Name</th>
                             <th>Description</th>
                             <th width="240px">Action</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody id="projects-table-body"></tbody>
@@ -57,6 +58,13 @@
                             <label for="description">Description</label>
                             <textarea class="form-control" id="description" rows="3" name="description"></textarea>
                         </div>
+                        <div class="form-group">
+                            <label for="status">Status</label>
+                            <select class="form-select" name="status" id="status">
+                                <option value="Completed">Completed</option>
+                                <option value="In Completed">In Completed</option>
+                            </select>
+                        </div>
                         <button type="submit" class="btn btn-outline-primary" id="save-project-btn">Save
                             Project</button>
                     </form>
@@ -86,6 +94,7 @@
     </div>
 
     <script type="text/javascript">
+
         $(document).ready(function () {
             showAllProjects();
         });
@@ -109,6 +118,7 @@
                                     <button class="btn btn-outline-success" onclick="editProject(${project.id})">Edit</button>
                                     <button class="btn btn-outline-danger" onclick="destroyProject(${project.id})">Delete</button>
                                 </td>
+                                <td>${project.status}</td>
                             </tr>`;
                         tbody.append(projectRow);
                     });
@@ -136,6 +146,7 @@
             const data = {
                 name: $("#name").val(),
                 description: $("#description").val(),
+                status: $("#status").val()
             };
             $.ajax({
                 url: url,
@@ -150,6 +161,7 @@
                 },
                 error: function (response) {
                     toggleSaveButton(false);
+                    console.log(response)
                     displayValidationErrors(response, "#modal-alert-div");
                 }
             });
@@ -256,6 +268,7 @@
                 $(selector).html(errorHtml);
             }
         }
+
     </script>
 </body>
 
