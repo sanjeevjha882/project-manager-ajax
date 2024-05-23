@@ -49,12 +49,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | Examples:	my-controller/index	-> my_controller/index
 |		my-controller/my-method	-> my_controller/my_method
 */
-$route['default_controller'] = 'project';
+// $route['default_controller'] = 'project';
+// $route['404_override'] = '';
+// $route['translate_uri_dashes'] = FALSE;
+// $route['project_manager_ajax/project'] = "project/index";
+// $route['project_manager_ajax/project/create'] = "project/create";
+// $route['project_manager_ajax/project/store']['post'] = "project/store";
+// $route['project_manager_ajax/project/edit/(:num)'] = "project/edit/$1";
+// $route['project_manager_ajax/project/update/(:num)']['put'] = "project/update/$1";
+// $route['project_manager_ajax/project/delete/(:num)']['delete'] = "project/delete/$1";
+$route['default_controller'] = 'user';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
-$route['project_manager_ajax/project'] = "project/index";
-$route['project_manager_ajax/project/create'] = "project/create";
-$route['project_manager_ajax/project/store']['post'] = "project/store";
-$route['project_manager_ajax/project/edit/(:num)'] = "project/edit/$1";
-$route['project_manager_ajax/project/update/(:num)']['put'] = "project/update/$1";
-$route['project_manager_ajax/project/delete/(:num)']['delete'] = "project/delete/$1";
